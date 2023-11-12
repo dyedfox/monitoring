@@ -1,5 +1,5 @@
 version: '3'
-
+# Щось типу persistent-storage
 volumes:
   prometheus-data:
     driver: local
@@ -13,7 +13,7 @@ services:
     ports:
       - "127.0.0.1:9090:9090"
     volumes:
-      - /etc/prometheus:/etc/prometheus
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus-data:/prometheus
     restart: unless-stopped
     command:
@@ -29,18 +29,43 @@ services:
       - "127.0.0.1:3000:3000"
     volumes:
       - grafana-data:/var/lib/grafana
+      - ./datasources.yaml:/etc/grafana/provisioning/datasources/ds.yaml
     restart: unless-stopped
     networks:
       prom_grafana:
         ipv4_address: 172.31.0.3
+
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+  #  ports:
+  #    - "3100:3100"
+  #  volumes:
+  #    - ./loki.yaml:/etc/loki/local-config.yaml
+  #  command: -config.file=/etc/loki/local-config.yaml
+    restart: unless-stopped
+    networks:
+      prom_grafana:
+        ipv4_address: 172.31.0.6
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: promtail
+    volumes:
+      - /var/log:/var/log
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - ./promtail-config.yaml:/etc/promtail/config.yml
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      prom_grafana:
+        ipv4_address: 172.31.0.7
 
   node_exporter:
       image: quay.io/prometheus/node-exporter:latest
       container_name: node_exporter
       command:
         - '--path.rootfs=/host'
-#      network_mode: host
-#      pid: host
       restart: unless-stopped
       volumes:
         - '/:/host:ro,rslave'
@@ -51,9 +76,6 @@ services:
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
     container_name: cadvisor
-#    ports:
-#      - "8080:8080"
-#    network_mode: host
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:ro
