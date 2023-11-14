@@ -17,6 +17,14 @@ scrape_configs:
       job: localhost
       __path__: /var/log/*log
 
+- job_name: hosts
+  static_configs:
+  - targets:
+      - localhost
+    labels:
+      log: hosts
+      __path__: /home/yaroslav/hosts_warden/log/app.log
+
 - job_name: docker
 # use docker.sock to filter containers
   docker_sd_configs:

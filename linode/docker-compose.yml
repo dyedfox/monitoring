@@ -53,6 +53,7 @@ services:
     container_name: promtail
     volumes:
       - /var/log:/var/log
+      - /home/yaroslav/hosts_warden/log/:/home/yaroslav/hosts_warden/log/
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - ./promtail-config.yaml:/etc/promtail/config.yml
