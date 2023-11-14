@@ -1,0 +1,30 @@
+## Приклад налаштування для доступу до portainer лише з хостів, які підключені через OpenVPN
+## Порт 8000 - для роботи з агентами, тут не потрібен
+## Зафіксовано адресу, маршрут до якої пушиться в конфігу OpenVPN, 127.0.0.1 - доступ лише зсередини мережі
+
+version: '3.8'
+services:
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    environment:
+      - TZ=Europe/Kyiv
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /opt/portainer/portainer_data:/data
+    ports:
+   #  - "8000:8000"
+      - "127.0.0.1:9443:9443"
+    restart: always
+    networks:
+      portainer_net:
+        ipv4_address: 172.19.0.2
+
+networks:
+  portainer_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.19.0.0/16
+          gateway: 172.19.0.1
+
