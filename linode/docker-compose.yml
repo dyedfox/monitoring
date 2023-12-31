@@ -34,6 +34,9 @@ services:
     networks:
       prom_grafana:
         ipv4_address: 172.31.0.3
+    environment:
+     - GF_INSTALL_PLUGINS=grafana-image-renderer
+     - GF_UNIFIED_ALERTING_SCREENSHOTS_CAPTURE=true
 
   loki:
     image: grafana/loki:latest
