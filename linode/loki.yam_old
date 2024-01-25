@@ -28,7 +28,7 @@ storage_config:
     cache_ttl: 24h
 
 limits_config:
-# Змінив тут, бо контейнер селеніума мав старі логи
+# Змінив тут, бо контейнер селеніума мав старі логи - не підтверджено - дивись новий конфіг
   reject_old_samples: false
   reject_old_samples_max_age: 900h
 
