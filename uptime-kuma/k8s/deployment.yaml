@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uptime-kuma
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: uptime-kuma
+  template:
+    metadata:
+      labels:
+        app: uptime-kuma
+    spec:
+      containers:
+      - name: uptime-kuma
+        image: elestio/uptime-kuma:latest
+        ports:
+        - containerPort: 3001
+        volumeMounts:
+        - name: uptime-kuma-storage
+          mountPath: /app/data
+      volumes:
+      - name: uptime-kuma-storage
+        persistentVolumeClaim:
+          claimName: uptime-kuma-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: uptime-kuma
+spec:
+  selector:
+    app: uptime-kuma
+  ports:
+    - protocol: TCP
+      port: 3001
+      targetPort: 3001
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: uptime-kuma-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
