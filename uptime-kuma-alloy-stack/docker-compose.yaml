@@ -1,0 +1,33 @@
+services:
+  uptime-kuma:
+    image: elestio/uptime-kuma:latest
+    container_name: uptime-kuma
+    volumes:
+      - uptime-kuma:/app/data
+    ports:
+      - "127.0.0.1:3001:3001"  # <Host Port>:<Container Port>
+    restart: always
+    networks:
+      - uptime_network
+
+  alloy:
+    image: grafana/alloy:latest
+    command: run --server.http.listen-addr=0.0.0.0:12345 --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy
+    volumes:
+      - ./config.alloy:/etc/alloy/config.alloy
+    ports:
+      - "127.0.0.1:12345:12345"
+    restart: always
+    networks:
+      - uptime_network    
+
+volumes:
+  uptime-kuma:
+
+networks:
+  uptime_network:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 172.22.0.0/16
+         gateway: 172.22.0.1

@@ -1,0 +1,50 @@
+remotecfg {
+	url            = "https://fleet-management-prod-014.grafana.net"
+	id             = "localhost.localdomain"
+	poll_frequency = "60s"
+
+	basic_auth {
+		username = "902889"
+		password = "<reduced>"
+	}
+}
+
+prometheus.remote_write "metrics_service" {
+	endpoint {
+		url = "https://prometheus-prod-36-prod-us-west-0.grafana.net/api/prom/push"
+
+		basic_auth {
+			username = "1519905"
+			password = "<reduced>"
+		}
+	}
+}
+
+loki.write "grafana_cloud_loki" {
+	endpoint {
+		url = "https://logs-prod-021.grafana.net/loki/api/v1/push"
+
+		basic_auth {
+			username = "860670"
+			password = "<reduced>"
+		}
+	}
+}
+
+prometheus.scrape "uptime_service" {
+
+  targets = [
+    {
+      __address__ = "uptime-kuma:3001",
+      __metrics_path__ = "/metrics",
+      __scheme__  = "http",
+    },
+  ]
+
+  basic_auth {
+    username = ""
+    password = "<reduced>"
+  }
+
+  forward_to = [prometheus.remote_write.metrics_service.receiver]
+}
