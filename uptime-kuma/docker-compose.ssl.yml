@@ -11,7 +11,7 @@ services:
       - web
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.uptime-kuma.rule=Host(`uptime.motionelements.work`)"
+      - "traefik.http.routers.uptime-kuma.rule=Host(`uptime.mysite.com`)"
       - "traefik.http.routers.uptime-kuma.entrypoints=websecure"
       - "traefik.http.routers.uptime-kuma.tls.certresolver=myresolver"
 
